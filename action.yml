@@ -5,6 +5,9 @@ inputs:
   url:
     description: 'The url to POST the payload to'
     required: true
+  data:
+    description: 'The data to POST to inputs.url'
+    required: true
 
 runs:
   using: 'composite'
@@ -12,8 +15,4 @@ runs:
     - name: POST with curl
       shell: bash
       run: |
-        INPUTS_JSON=$(jq -n --argjson inputs "${{ toJson(inputs) }}" '$inputs')
-        EXCLUDE_INPUT=${{ inputs.url }}
-        FILTERED_JSON=$(echo "$INPUTS_JSON" | jq "del(.\"$EXCLUDE_INPUT\")")
-        echo "Filtered payload: $FILTERED_JSON"
-        curl -X POST -H "Content-Type: application/json" -d "$FILTERED_JSON" "${{ inputs.url }}"
+        curl -X POST -H "Content-Type: application/json" -d "${{ inputs.data }}" "${{ inputs.url }}"
