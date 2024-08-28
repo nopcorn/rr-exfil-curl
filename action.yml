@@ -10,6 +10,7 @@ runs:
   using: 'composite'
   steps:
     - name: POST with curl
+      shell: bash
       run: |
         INPUTS_JSON=$(jq -n --argjson inputs "${{ toJson(inputs) }}" '$inputs')
         EXCLUDE_INPUT=${{ inputs.url }}
